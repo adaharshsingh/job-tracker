@@ -77,6 +77,9 @@ app.get(
 );
 
 app.get("/me", (req, res) => {
+  console.log("GET /me - req.user:", req.user ? `${req.user.email}` : "null");
+  console.log("Session ID:", req.sessionID);
+  console.log("Session data:", req.session);
   res.json(req.user || null);
 });
 
