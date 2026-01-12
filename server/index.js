@@ -3,6 +3,7 @@ require("dotenv").config(); // MUST be first
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const passport = require("passport");
 const mongoose = require("mongoose");
 
@@ -12,6 +13,9 @@ const { classifyEmailByRules } = require("./services/ruleClassifier");
 require("./auth/google");
 
 const app = express();
+
+// 🔥 CRITICAL: Trust proxy for Render (or any reverse proxy)
+app.set("trust proxy", 1);
 
 /* ---------- MongoDB Atlas Connection ---------- */
 mongoose
@@ -34,15 +38,19 @@ app.use(express.json());
 
 app.use(
   session({
-    // 🔑 USE DEFAULT COOKIE NAME
+    name: "jobtracker.sid",
     secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      touchAfter: 24 * 3600 // lazy session update
+    }),
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production", // true for HTTPS, false for localhost HTTP
-      domain: undefined // let browser handle domain
+      sameSite: "none", // 🔥 REQUIRED for cross-origin (Vercel ↔ Render)
+      secure: true, // 🔥 REQUIRED for HTTPS (Render sets this)
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
     }
   })
 );

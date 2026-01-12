@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useTheme } from "../context/ThemeContext";
 
 function DeleteConfirmModal({ deleteDialog, onClose, onConfirm }) {

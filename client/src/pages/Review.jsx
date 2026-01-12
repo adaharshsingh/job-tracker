@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import api from "../api/client";
 import { extractCompany } from "../utils/extractCompany";
 import Navbar from "../Components/Navbar";

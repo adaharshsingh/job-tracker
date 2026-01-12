@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import api from "../api/client";
 import Navbar from "../Components/Navbar";
 import ApplicationsChart from "../Components/ApplicationsChart";
@@ -151,8 +151,6 @@ function Dashboard() {
 
   /* ---------- STICKY NAVBAR WITH AUTO-HIDE ---------- */
   useEffect(() => {
-    let lastScrollY = 0;
-    
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
@@ -170,8 +168,6 @@ function Dashboard() {
           setShowNavbar(false);
         }
       }, 3000);
-      
-      lastScrollY = currentScrollY;
     };
     
     window.addEventListener("scroll", handleScroll);

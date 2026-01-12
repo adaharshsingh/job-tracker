@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+
 import ComposeJob from "../Components/ComposeJob";
 import api from "../api/client";
 import { useTheme } from "../context/ThemeContext";
@@ -30,7 +30,7 @@ function Navbar({ searchQuery = "", onSearchChange, startDate = "", onStartDateC
     // dispatch event so pages (Dashboard) can update their state
     try {
       window.dispatchEvent(new CustomEvent("jobCreated", { detail: newJob }));
-    } catch (e) {
+    } catch {
       // fallback: reload
       window.location.reload();
     }
