@@ -17,6 +17,12 @@ const app = express();
 // 🔥 CRITICAL: Trust proxy for Render (or any reverse proxy)
 app.set("trust proxy", 1);
 
+// Frontend URL (environment-specific)
+const FRONTEND_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://applyd.online"
+    : "http://localhost:5173";
+
 /* ---------- MongoDB Atlas Connection ---------- */
 mongoose
   .connect(process.env.MONGO_URI)
@@ -25,9 +31,7 @@ mongoose
 
 /* ---------- Middleware ---------- */
 const isProd = process.env.NODE_ENV === "production";
-const corsOrigin = isProd ? "https://applyd.online" : "http://localhost:5173";
-
-app.set("trust proxy", 1);
+const corsOrigin = FRONTEND_URL;
 
 app.use(
   cors({
@@ -80,20 +84,12 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    // Use normalized URL (no trailing slash)
-    const target = normalizedFrontendUrl + "/dashboard";
-    console.log("Auth callback: redirecting to:", target);
-    console.log("User logged in:", req.user?.email || 'unknown');
-    console.log("Session before save:", Object.keys(req.session || {}));
-    
-    // CRITICAL: Save session to MongoDB before redirecting
-    req.session.save((err) => {
-      if (err) {
-        console.error("❌ Session save error:", err);
-        return res.status(500).send("Session save failed");
-      }
-      console.log("✅ Session saved to MongoDB with ID:", req.sessionID);
-      res.redirect(target);
+    console.log("User logged in:", req.user?.email);
+
+    req.session.save(() => {
+      res.setHeader("Cache-Control", "no-store");
+      // CRITICAL: respond once to same origin to commit cookie before cross-site
+      res.redirect(303, `${FRONTEND_URL}/auth-complete`);
     });
   }
 );
@@ -130,9 +126,11 @@ app.get("/gmail/test", async (req, res) => {
 app.get("/logout", (req, res) => {
   req.logout(() => {
     req.session.destroy(() => {
-      res.clearCookie("connect.sid", {
+      res.clearCookie("jobtracker.sid", {
         path: "/",
-        sameSite: "lax"
+        domain: isProd ? ".applyd.online" : undefined,
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax"
       });
       res.json({ success: true });
     });
