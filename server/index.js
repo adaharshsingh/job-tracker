@@ -40,8 +40,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: "lax", // correct for localhost
-      secure: false
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // true for HTTPS, false for localhost HTTP
+      domain: undefined // let browser handle domain
     }
   })
 );

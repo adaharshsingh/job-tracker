@@ -29,6 +29,7 @@ MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/jobs-db
 
 # Session & Security
 SESSION_SECRET=your_super_secret_key_here_change_in_production
+NODE_ENV=development
 
 # Google OAuth
 GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
@@ -377,12 +378,12 @@ session({
 ```env
 MONGO_URI=mongodb+srv://prod-user:prod-pass@prod-cluster.mongodb.net/jobs-db
 SESSION_SECRET=long_random_secret_key_minimum_32_characters
+NODE_ENV=production
 GOOGLE_CLIENT_ID=prod-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=prod-client-secret
 GOOGLE_CALLBACK_URL=https://yourapp.com/auth/google/callback
 FRONTEND_URL=https://yourapp.com
 PORT=3000
-NODE_ENV=production
 ```
 
 ### Deploy to Heroku
