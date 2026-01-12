@@ -19,10 +19,10 @@ app.set("trust proxy", 1);
 
 // Environment detection
 const isProd = process.env.NODE_ENV === "production";
-const CORS_ORIGIN = isProd ? "https://applyd.online" : "http://localhost:5173";
-const COOKIE_DOMAIN = isProd ? ".applyd.online" : undefined;
-const COOKIE_SECURE = isProd ? true : false;
-const COOKIE_SAMESITE = isProd ? "none" : "lax";
+const CORS_ORIGIN = "https://applyd.online";
+const COOKIE_DOMAIN = ".applyd.online";
+const COOKIE_SECURE = true;
+const COOKIE_SAMESITE = "none" ;
 
 /* ---------- MongoDB Atlas Connection ---------- */
 mongoose
@@ -86,7 +86,7 @@ app.get(
 
     req.session.save(() => {
       res.setHeader("Cache-Control", "no-store");
-      const redirectUrl = isProd ? "https://applyd.online/auth-complete" : "http://localhost:5173/auth-complete";
+      const redirectUrl = "https://applyd.online/auth-complete";
       res.redirect(303, redirectUrl);
     });
   }
