@@ -42,23 +42,21 @@ app.use(express.json());
 app.use(
   session({
     name: "jobtracker.sid",
-    secret: process.env.SESSION_SECRET || "dev_secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true, // 🔥 CRITICAL: Save session even if empty (Passport needs this)
+    saveUninitialized: false,
     proxy: true,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       collectionName: "sessions",
       ttl: 7 * 24 * 60 * 60
-    })
-      .on("connected", () => console.log("✅ MongoStore connected to MongoDB"))
-      .on("error", (err) => console.error("❌ MongoStore error:", err)),
+    }),
     cookie: {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: isProd,                          // ✅ only true in production
-      sameSite: isProd ? "none" : "lax",       // ✅ "none" for cross-site (prod), "lax" for localhost
-      domain: isProd ? ".applyd.online" : undefined // ✅ only set domain in production
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      domain: isProd ? ".applyd.online" : undefined
     }
   })
 );
