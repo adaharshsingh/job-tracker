@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import ComposeJob from "../Components/ComposeJob";
 import api from "../api/client";
