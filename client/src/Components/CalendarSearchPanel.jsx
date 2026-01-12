@@ -1,5 +1,5 @@
 import React from "react";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import CalendarWidget from "./CalendarWidget";
 import { useTheme } from "../context/ThemeContext";
 
