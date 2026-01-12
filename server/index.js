@@ -42,18 +42,20 @@ app.use(
     secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
     saveUninitialized: false,
-    proxy: true, // 🔥 CRITICAL: Required for load-balanced backends
+    proxy: true,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       collectionName: "sessions",
-      ttl: 7 * 24 * 60 * 60 // 7 days
-    }),
+      ttl: 7 * 24 * 60 * 60
+    })
+      .on("connected", () => console.log("✅ MongoStore connected to MongoDB"))
+      .on("error", (err) => console.error("❌ MongoStore error:", err)),
     cookie: {
-      domain: ".applyd.online", // 🔥 CRITICAL: Shared across all instances via domain
+      domain: ".applyd.online",
       secure: true,
       sameSite: "none",
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+      maxAge: 7 * 24 * 60 * 60 * 1000
     }
   })
 );
@@ -96,9 +98,17 @@ app.get(
 );
 
 app.get("/me", (req, res) => {
-  console.log("GET /me - req.user:", req.user ? `${req.user.email}` : "null");
+  console.log("=== GET /me ===");
   console.log("Session ID:", req.sessionID);
-  console.log("Session data:", req.session);
+  console.log("Session user:", req.user?.email || "null");
+  console.log("Full session data keys:", Object.keys(req.session || {}));
+  
+  if (req.user) {
+    console.log("✅ User authenticated:", req.user.email);
+  } else {
+    console.log("❌ User is null - session not found in MongoDB or passport deserialize failed");
+  }
+  
   res.json(req.user || null);
 });
 
