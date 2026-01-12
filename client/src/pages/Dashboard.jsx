@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import api from "../api/client";
 import Navbar from "../Components/Navbar";
 import ApplicationsChart from "../Components/ApplicationsChart";
