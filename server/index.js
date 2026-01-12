@@ -41,7 +41,7 @@ app.use(
     name: "jobtracker.sid",
     secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // 🔥 CRITICAL: Save session even if empty (Passport needs this)
     proxy: true,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
@@ -51,10 +51,9 @@ app.use(
       .on("connected", () => console.log("✅ MongoStore connected to MongoDB"))
       .on("error", (err) => console.error("❌ MongoStore error:", err)),
     cookie: {
-      domain: ".applyd.online",
-      secure: true,
-      sameSite: "none",
       httpOnly: true,
+      sameSite: "lax",
+      secure: false, // localhost HTTP
       maxAge: 7 * 24 * 60 * 60 * 1000
     }
   })
@@ -85,13 +84,15 @@ app.get(
     const target = normalizedFrontendUrl + "/dashboard";
     console.log("Auth callback: redirecting to:", target);
     console.log("User logged in:", req.user?.email || 'unknown');
+    console.log("Session before save:", Object.keys(req.session || {}));
     
     // CRITICAL: Save session to MongoDB before redirecting
     req.session.save((err) => {
       if (err) {
-        console.error("Session save error:", err);
+        console.error("❌ Session save error:", err);
         return res.status(500).send("Session save failed");
       }
+      console.log("✅ Session saved to MongoDB with ID:", req.sessionID);
       res.redirect(target);
     });
   }
