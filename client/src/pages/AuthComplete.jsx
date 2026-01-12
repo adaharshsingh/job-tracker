@@ -3,18 +3,23 @@ import api from "../api/client";
 
 export default function AuthComplete() {
   useEffect(() => {
-    // Verify cookie was accepted by calling /me on the API
     api
-      .get("/me")
-      .then(() => {
-        // Cookie accepted, redirect to dashboard
-        window.location.href = "/dashboard";
+      .get("/me", { withCredentials: true })
+      .then(res => {
+        if (res.data) {
+          window.location.replace("/dashboard");
+        } else {
+          window.location.replace("/");
+        }
       })
       .catch(() => {
-        // Cookie failed, redirect to login
-        window.location.href = "/";
+        window.location.replace("/");
       });
   }, []);
 
-  return <div>Completing authentication...</div>;
+  return (
+    <div className="min-h-screen flex items-center justify-center text-gray-600">
+      Completing authentication…
+    </div>
+  );
 }
