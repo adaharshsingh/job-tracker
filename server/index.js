@@ -27,6 +27,9 @@ mongoose
 // Normalize FRONTEND_URL: remove trailing slash for CORS exact match
 const normalizedFrontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
 
+// Environment-specific cookie config
+const isProd = process.env.NODE_ENV === "production";
+
 app.use(
   cors({
     origin: normalizedFrontendUrl,
@@ -52,9 +55,10 @@ app.use(
       .on("error", (err) => console.error("❌ MongoStore error:", err)),
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false, // localhost HTTP
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: isProd,                          // ✅ only true in production
+      sameSite: isProd ? "none" : "lax",       // ✅ "none" for cross-site (prod), "lax" for localhost
+      domain: isProd ? ".applyd.online" : undefined // ✅ only set domain in production
     }
   })
 );
