@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import api from "../api/client";
-import { Mail, BarChart3, Clock, Search, Shield, Zap } from "lucide-react";
 
 function Login() {
   // Redirect if already logged in
@@ -31,32 +30,56 @@ function Login() {
 
   const features = [
     {
-      icon: Mail,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      ),
       title: "Auto-Track Applications",
       description: "Automatically identifies job application emails from your Gmail inbox"
     },
     {
-      icon: BarChart3,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      ),
       title: "Smart Analytics",
       description: "See your application statistics, success rates, and trends at a glance"
     },
     {
-      icon: Clock,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
       title: "Timeline View",
       description: "Track every stage of your job search journey with timestamps"
     },
     {
-      icon: Search,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      ),
       title: "Company Insights",
       description: "Organize and review job opportunities by company and position"
     },
     {
-      icon: Shield,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      ),
       title: "Privacy First",
       description: "Your data is encrypted and secure. We never sell your information"
     },
     {
-      icon: Zap,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
       title: "Lightning Fast",
       description: "Real-time sync with your Gmail for instant updates"
     }
@@ -100,11 +123,10 @@ function Login() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, idx) => {
-            const Icon = feature.icon;
             return (
               <div key={idx} className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 text-blue-600">
+                  {feature.icon}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {feature.title}
