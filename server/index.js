@@ -18,10 +18,7 @@ const app = express();
 app.set("trust proxy", 1);
 
 // Frontend URL (environment-specific)
-const FRONTEND_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://applyd.online"
-    : "http://localhost:5173";
+const FRONTEND_URL =process.env.FRONTEND_URL;
 
 /* ---------- MongoDB Atlas Connection ---------- */
 mongoose
