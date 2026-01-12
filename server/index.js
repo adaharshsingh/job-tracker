@@ -42,15 +42,18 @@ app.use(
     secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
     saveUninitialized: false,
+    proxy: true, // 🔥 CRITICAL: Required for load-balanced backends
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      touchAfter: 24 * 3600 // lazy session update
+      collectionName: "sessions",
+      ttl: 7 * 24 * 60 * 60 // 7 days
     }),
     cookie: {
+      domain: ".applyd.online", // 🔥 CRITICAL: Shared across all instances via domain
+      secure: true,
+      sameSite: "none",
       httpOnly: true,
-      sameSite: "none", // 🔥 REQUIRED for cross-origin (Vercel ↔ Render)
-      secure: true, // 🔥 REQUIRED for HTTPS (Render sets this)
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
     }
   })
 );
