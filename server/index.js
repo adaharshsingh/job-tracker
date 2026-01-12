@@ -17,6 +17,13 @@ const app = express();
 // 🔥 CRITICAL: Trust proxy for Render (or any reverse proxy)
 app.set("trust proxy", 1);
 
+// Environment detection
+const isProd = process.env.NODE_ENV === "production";
+const CORS_ORIGIN = isProd ? "https://applyd.online" : "http://localhost:5173";
+const COOKIE_DOMAIN = isProd ? ".applyd.online" : undefined;
+const COOKIE_SECURE = isProd ? true : false;
+const COOKIE_SAMESITE = isProd ? "none" : "lax";
+
 /* ---------- MongoDB Atlas Connection ---------- */
 mongoose
   .connect(process.env.MONGO_URI)
@@ -26,7 +33,7 @@ mongoose
 /* ---------- Middleware ---------- */
 app.use(
   cors({
-    origin: "https://applyd.online",
+    origin: CORS_ORIGIN,
     credentials: true
   })
 );
@@ -46,9 +53,9 @@ app.use(
     }),
     cookie: {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      domain: ".applyd.online",
+      secure: COOKIE_SECURE,
+      sameSite: COOKIE_SAMESITE,
+      domain: COOKIE_DOMAIN,
       maxAge: 7 * 24 * 60 * 60 * 1000
     }
   })
@@ -79,8 +86,8 @@ app.get(
 
     req.session.save(() => {
       res.setHeader("Cache-Control", "no-store");
-      // CRITICAL: respond once to same origin to commit cookie before cross-site
-      res.redirect(303, "https://applyd.online/auth-complete");
+      const redirectUrl = isProd ? "https://applyd.online/auth-complete" : "http://localhost:5173/auth-complete";
+      res.redirect(303, redirectUrl);
     });
   }
 );
@@ -119,9 +126,9 @@ app.get("/logout", (req, res) => {
     req.session.destroy(() => {
       res.clearCookie("jobtracker.sid", {
         path: "/",
-        domain:".applyd.online",
-        secure: true,
-        sameSite: "none"
+        domain: COOKIE_DOMAIN,
+        secure: COOKIE_SECURE,
+        sameSite: COOKIE_SAMESITE
       });
       res.json({ success: true });
     });

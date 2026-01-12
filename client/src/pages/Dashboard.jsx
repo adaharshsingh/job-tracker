@@ -350,7 +350,7 @@ function Dashboard() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-col sm:flex-row justify-between mb-6 sm:mb-8 items-start sm:items-center gap-3 sm:gap-4"
         >
-          <h1 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent`}>📊 My Jobs</h1>
+          <h1 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent`}>My Jobs</h1>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             {(searchQuery.trim() || searchFocused) && (

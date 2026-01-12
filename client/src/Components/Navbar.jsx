@@ -46,13 +46,23 @@ function Navbar({ searchQuery = "", onSearchChange, startDate = "", onStartDateC
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-4 sm:gap-6">
             <button
-              onClick={() => window.location.href = "/dashboard"}
-              className={`font-bold text-xs sm:text-sm lg:text-lg transition-colors duration-300 hover:opacity-80 ${
-                isDark ? "text-cyan-400" : "text-orange-600"
-              }`}
-            >
-              📊 Job Tracker
-            </button>
+  onClick={() => window.location.href = "/dashboard"}
+  className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
+>
+  <img
+    src="/vite.png"
+    alt="Job Tracker logo"
+    className="h-9 w-9 sm:h-8 sm:w-8 object-contain"
+  />
+
+  <span
+    className={`font-bold text-sm sm:text-base lg:text-lg leading-none ${
+      isDark ? "text-cyan-400" : "text-orange-600"
+    }`}
+  >
+    Applyd
+  </span>
+</button>
 
             {/* Show only one navigation button: the other page */}
             {isDashboardPage && (
