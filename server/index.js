@@ -65,7 +65,14 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-    res.redirect(`${frontendUrl}/dashboard`);
+    console.log("Auth callback: redirecting to frontendUrl:", frontendUrl);
+    console.log("User logged in:", req.user?.email || 'unknown');
+    // Normalize and guard
+    const target = frontendUrl.replace(/\/$/, '') + "/dashboard";
+    if (!frontendUrl) {
+      return res.status(500).send("FRONTEND_URL not configured on server");
+    }
+    res.redirect(target);
   }
 );
 
