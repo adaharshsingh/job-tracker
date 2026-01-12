@@ -80,7 +80,15 @@ app.get(
     const target = normalizedFrontendUrl + "/dashboard";
     console.log("Auth callback: redirecting to:", target);
     console.log("User logged in:", req.user?.email || 'unknown');
-    res.redirect(target);
+    
+    // CRITICAL: Save session to MongoDB before redirecting
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).send("Session save failed");
+      }
+      res.redirect(target);
+    });
   }
 );
 
