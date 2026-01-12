@@ -24,15 +24,14 @@ mongoose
   .catch(err => console.error("MongoDB connection error:", err));
 
 /* ---------- Middleware ---------- */
-// Normalize FRONTEND_URL: remove trailing slash for CORS exact match
-const normalizedFrontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
-
-// Environment-specific cookie config
 const isProd = process.env.NODE_ENV === "production";
+const corsOrigin = isProd ? "https://applyd.online" : "http://localhost:5173";
+
+app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: normalizedFrontendUrl,
+    origin: corsOrigin,
     credentials: true
   })
 );
@@ -48,15 +47,14 @@ app.use(
     proxy: true,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      collectionName: "sessions",
-      ttl: 7 * 24 * 60 * 60
+      collectionName: "sessions"
     }),
     cookie: {
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: isProd,
+      secure: isProd ? true : false,
       sameSite: isProd ? "none" : "lax",
-      domain: isProd ? ".applyd.online" : undefined
+      domain: isProd ? ".applyd.online" : undefined,
+      maxAge: 7 * 24 * 60 * 60 * 1000
     }
   })
 );
