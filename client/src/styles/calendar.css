@@ -1,0 +1,80 @@
+/* Calendar Grid Layout */
+.rbc-calendar {
+  font-family: inherit;
+}
+
+.rbc-month-view {
+  position: relative;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rbc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.rbc-toolbar button {
+  outline: none;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin: 2px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rbc-toolbar button:hover {
+  transform: translateY(-1px);
+}
+
+.rbc-header {
+  padding: 12px 4px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.rbc-date-cell {
+  padding: 4px 2px;
+  text-align: center;
+}
+
+.rbc-off-range-bg {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.rbc-today {
+  font-weight: bold;
+}
+
+.rbc-off-range {
+  color: #999;
+}
+
+.rbc-show-more {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.rbc-day-bg {
+  border: 1px solid #e5e7eb;
+}
+
+.rbc-selected {
+  background-color: #EA580C;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
