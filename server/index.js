@@ -119,9 +119,9 @@ app.get("/logout", (req, res) => {
     req.session.destroy(() => {
       res.clearCookie("jobtracker.sid", {
         path: "/",
-        domain: isProd ? ".applyd.online" : undefined,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax"
+        domain:".applyd.online",
+        secure: true,
+        sameSite: "none"
       });
       res.json({ success: true });
     });
