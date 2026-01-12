@@ -17,9 +17,6 @@ const app = express();
 // 🔥 CRITICAL: Trust proxy for Render (or any reverse proxy)
 app.set("trust proxy", 1);
 
-// Frontend URL (environment-specific)
-const FRONTEND_URL =process.env.FRONTEND_URL;
-
 /* ---------- MongoDB Atlas Connection ---------- */
 mongoose
   .connect(process.env.MONGO_URI)
@@ -27,12 +24,9 @@ mongoose
   .catch(err => console.error("MongoDB connection error:", err));
 
 /* ---------- Middleware ---------- */
-const isProd = process.env.NODE_ENV === "production";
-const corsOrigin = FRONTEND_URL;
-
 app.use(
   cors({
-    origin: corsOrigin,
+    origin: "https://applyd.online",
     credentials: true
   })
 );
@@ -52,9 +46,9 @@ app.use(
     }),
     cookie: {
       httpOnly: true,
-      secure: isProd ? true : false,
-      sameSite: isProd ? "none" : "lax",
-      domain: isProd ? ".applyd.online" : undefined,
+      secure: true,
+      sameSite: "none",
+      domain: ".applyd.online",
       maxAge: 7 * 24 * 60 * 60 * 1000
     }
   })
@@ -86,7 +80,7 @@ app.get(
     req.session.save(() => {
       res.setHeader("Cache-Control", "no-store");
       // CRITICAL: respond once to same origin to commit cookie before cross-site
-      res.redirect(303, `${FRONTEND_URL}/auth-complete`);
+      res.redirect(303, "https://applyd.online/auth-complete");
     });
   }
 );
