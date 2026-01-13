@@ -13,6 +13,8 @@ function Review() {
   const [syncCount, setSyncCount] = useState(30);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState("");
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -88,6 +90,32 @@ function Review() {
     }
   };
 
+  const handleDeleteAll = async () => {
+    try {
+      setIsDeletingAll(true);
+      
+      // Delete all emails by marking them as IGNORE
+      await Promise.all(
+        emails.map(e =>
+          api.post("/review/confirm", {
+            snapshotId: e._id,
+            finalIntent: "IGNORE"
+          })
+        )
+      );
+
+      setEmails([]);
+      setShowDeleteAllModal(false);
+      setSyncMessage("All emails deleted");
+      setTimeout(() => setSyncMessage(""), 3000);
+    } catch (err) {
+      console.error(err);
+      setSyncMessage("Failed to delete emails");
+    } finally {
+      setIsDeletingAll(false);
+    }
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
@@ -131,6 +159,24 @@ function Review() {
         >
           {isSyncing ? "⏳" : "🔄"} {isSyncing ? "Syncing..." : "Sync Emails"}
         </motion.button>
+
+        {/* DELETE ALL BUTTON */}
+        {emails.length > 0 && (
+          <motion.button
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            onClick={() => setShowDeleteAllModal(true)}
+            disabled={isSyncing || isDeletingAll}
+            className={`mb-6 ml-3 inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 border ${
+              isDark
+                ? "border-red-700 bg-red-900 bg-opacity-30 text-red-400 hover:bg-red-800 hover:bg-opacity-50 disabled:opacity-50"
+                : "border-red-300 bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50"
+            }`}
+          >
+            {isDeletingAll ? "⏳" : "🗑"} {isDeletingAll ? "Deleting..." : "Delete All"}
+          </motion.button>
+        )}
 
         {/* SYNC MESSAGE */}
         {syncMessage && (
@@ -226,6 +272,68 @@ function Review() {
                     }`}
                   >
                     {isSyncing ? "⏳ Syncing..." : "✓ Sync"}
+                  </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* DELETE ALL MODAL */}
+        <AnimatePresence>
+          {showDeleteAllModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              onClick={() => !isDeletingAll && setShowDeleteAllModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4 ${
+                  isDark ? "bg-gray-800" : "bg-white"
+                }`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h2 className={`text-2xl font-bold mb-4 ${isDark ? "text-white" : "text-gray-900"}`}>
+                  🗑 Delete All Emails?
+                </h2>
+                
+                <p className={`text-sm mb-6 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                  Are you sure you want to delete all {emails.length} unreviewed email{emails.length !== 1 ? 's' : ''}? This action cannot be undone.
+                </p>
+
+                <div className="flex gap-3">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowDeleteAllModal(false)}
+                    disabled={isDeletingAll}
+                    className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                      isDark
+                        ? "border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 disabled:opacity-50"
+                        : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+                    }`}
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleDeleteAll}
+                    disabled={isDeletingAll}
+                    className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isDark
+                        ? "bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                        : "bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+                    }`}
+                  >
+                    {isDeletingAll ? "⏳ Deleting..." : "✓ Delete All"}
                   </motion.button>
                 </div>
               </motion.div>
