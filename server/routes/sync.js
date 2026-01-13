@@ -88,6 +88,13 @@ router.post("/gmail-unknown", async (req, res) => {
     const messages = await listJobEmails(req.user.accessToken, 50, sinceDate);
     console.log(`[SYNC] Found ${messages?.length || 0} messages`);
 
+    // 🗑️ CLEANUP: Delete old unreviewed emails BEFORE adding new ones
+    // This prevents review queue from accumulating old emails
+    await EmailSnapshot.deleteMany({
+      userId,
+      intent: "UNKNOWN"
+    });
+
     if (!messages.length) {
       console.log(`[SYNC] No messages found, returning empty summary`);
       return res.json({
@@ -283,13 +290,6 @@ router.post("/gmail-unknown", async (req, res) => {
       { upsert: true }
     );
 
-    // 🗑️ CLEANUP: Delete all old email snapshots for unknown emails
-    // This prevents the review queue from accumulating old emails
-    await EmailSnapshot.deleteMany({
-      userId,
-      intent: "UNKNOWN"
-    });
-
     res.json({
       syncedAt: new Date(),
       summary
@@ -427,6 +427,13 @@ router.post("/gmail-unknown/fetch", async (req, res) => {
     }
 
     const messages = await listJobEmails(req.user.accessToken, maxResults);
+
+    // 🗑️ CLEANUP: Delete old unreviewed emails BEFORE adding new ones
+    // This prevents review queue from accumulating old emails
+    await EmailSnapshot.deleteMany({
+      userId,
+      intent: "UNKNOWN"
+    });
 
     if (!messages.length) {
       return res.json({
@@ -624,13 +631,6 @@ router.post("/gmail-unknown/fetch", async (req, res) => {
       },
       { upsert: true }
     );
-
-    // 🗑️ CLEANUP: Delete all old email snapshots for unknown emails
-    // This prevents the review queue from accumulating old emails
-    await EmailSnapshot.deleteMany({
-      userId,
-      intent: "UNKNOWN"
-    });
 
     res.json({
       syncedAt: new Date(),
