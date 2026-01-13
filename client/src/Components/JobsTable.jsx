@@ -292,9 +292,11 @@ function JobsTable({
                         📧 {emailPreview.subject}
                       </div>
                       <div
-                        className={isDark ? "text-gray-400" : "text-gray-600"}
+                        className={`${isDark ? "text-gray-400" : "text-gray-600"} line-clamp-3 break-words whitespace-normal`}
                       >
-                        {emailPreview.snippet}
+                        {emailPreview.snippet?.length > 300
+                          ? emailPreview.snippet.substring(0, 300) + "..."
+                          : emailPreview.snippet}
                       </div>
                     </td>
                   </motion.tr>

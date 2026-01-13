@@ -97,7 +97,8 @@ router.post("/gmail-unknown", async (req, res) => {
           interview: 0,
           offer: 0,
           rejected: 0,
-          unknown: 0
+          unknown: 0,
+          ignored: 0
         }
       });
     }
@@ -111,11 +112,19 @@ router.post("/gmail-unknown", async (req, res) => {
       interview: 0,
       offer: 0,
       rejected: 0,
-      unknown: 0
+      unknown: 0,
+      ignored: 0
     };
 
     for (const email of emails) {
       const intent = classifyEmailByRules(email);
+
+      /* ---------- SKIP IGNORED EMAILS (OTP, PROMOTION, NEWSLETTER) ---------- */
+      if (intent === "IGNORE") {
+        summary.ignored++;
+        // Don't save to review, don't create job, just skip
+        continue;
+      }
 
       /* ---------- JOB EMAIL ---------- */
       if (INTENT_TO_STATUS[intent]) {
@@ -274,6 +283,13 @@ router.post("/gmail-unknown", async (req, res) => {
       { upsert: true }
     );
 
+    // 🗑️ CLEANUP: Delete all old email snapshots for unknown emails
+    // This prevents the review queue from accumulating old emails
+    await EmailSnapshot.deleteMany({
+      userId,
+      intent: "UNKNOWN"
+    });
+
     res.json({
       syncedAt: new Date(),
       summary
@@ -420,7 +436,8 @@ router.post("/gmail-unknown/fetch", async (req, res) => {
           interview: 0,
           offer: 0,
           rejected: 0,
-          unknown: 0
+          unknown: 0,
+          ignored: 0
         }
       });
     }
@@ -434,11 +451,19 @@ router.post("/gmail-unknown/fetch", async (req, res) => {
       interview: 0,
       offer: 0,
       rejected: 0,
-      unknown: 0
+      unknown: 0,
+      ignored: 0
     };
 
     for (const email of emails) {
       const intent = classifyEmailByRules(email);
+
+      /* ---------- SKIP IGNORED EMAILS (OTP, PROMOTION, NEWSLETTER) ---------- */
+      if (intent === "IGNORE") {
+        summary.ignored++;
+        // Don't save to review, don't create job, just skip
+        continue;
+      }
 
       /* ---------- JOB EMAIL ---------- */
       if (INTENT_TO_STATUS[intent]) {
@@ -599,6 +624,13 @@ router.post("/gmail-unknown/fetch", async (req, res) => {
       },
       { upsert: true }
     );
+
+    // 🗑️ CLEANUP: Delete all old email snapshots for unknown emails
+    // This prevents the review queue from accumulating old emails
+    await EmailSnapshot.deleteMany({
+      userId,
+      intent: "UNKNOWN"
+    });
 
     res.json({
       syncedAt: new Date(),

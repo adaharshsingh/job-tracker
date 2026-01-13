@@ -22,9 +22,13 @@ router.get("/by-thread/:threadId", async (req, res) => {
   // sanitize before returning
   const sanitize = (s) => (s || "").toString().replace(/\s+/g, " ").trim();
 
+  // Truncate snippet to 400 chars to prevent layout lag
+  const snippet = sanitize(email.snippet);
+  const truncatedSnippet = snippet.length > 400 ? snippet.substring(0, 400) + "..." : snippet;
+
   res.json({
     subject: sanitize(email.subject),
-    snippet: sanitize(email.snippet),
+    snippet: truncatedSnippet,
     from: sanitize(email.from)
   });
 });

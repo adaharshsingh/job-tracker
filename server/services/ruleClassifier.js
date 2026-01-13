@@ -1,4 +1,60 @@
-/* ---------- MARKETING / NOISE ---------- */
+/* ---------- OTP / SECURITY TOKENS ---------- */
+const OTP_KEYWORDS = [
+  "verification code",
+  "confirm your identity",
+  "verify your account",
+  "one-time password",
+  "otp",
+  "confirm email address",
+  "confirm your email",
+  "verify email",
+  "activation code",
+  "security code",
+  "temporary password",
+  "reset your password",
+  "change your password",
+  "confirm your login",
+  "unusual activity",
+  "suspicious login",
+  "authorize this login",
+  "two-factor",
+  "2fa",
+  "authenticator"
+];
+
+/* ---------- PROMOTIONS / NEWSLETTERS ---------- */
+const PROMOTION_KEYWORDS = [
+  "promotion",
+  "promotional",
+  "special offer",
+  "discount",
+  "deal",
+  "limited time",
+  "exclusive offer",
+  "sale",
+  "shop now",
+  "buy now",
+  "newsletter",
+  "unsubscribe",
+  "marketing communication"
+];
+
+/* ---------- LINKEDIN NEWSLETTERS / NOISE ---------- */
+const LINKEDIN_NOISE_KEYWORDS = [
+  "linkedin newsletter",
+  "linkedin weekly",
+  "your top news from linkedin",
+  "updates from your network",
+  "trending on linkedin",
+  "see who viewed your profile",
+  "people you may know",
+  "job suggestion",
+  "someone has viewed your profile",
+  "reminder to follow up",
+  "linkedin digest"
+];
+
+/* ---------- MARKETING / COURSES / TRAINING ---------- */
 const MARKETING_KEYWORDS = [
   "certification",
   "course",
@@ -19,12 +75,14 @@ const MARKETING_KEYWORDS = [
   "masterclass",
   "join now",
   "register",
-  "unsubscribe",
   "job alert",
   "jobs you haven't applied",
   "career report",
   "salary",
-  "hiring roadmap"
+  "hiring roadmap",
+  "learn more",
+  "free course",
+  "free training"
 ];
 
 /* ---------- APPLIED ---------- */
@@ -88,6 +146,15 @@ function includesAny(text, keywords) {
 
 function classifyEmailByRules({ subject, snippet }) {
   const text = `${subject} ${snippet}`.toLowerCase();
+
+  // 🔒 FILTER OUT: OTP / Security tokens
+  if (includesAny(text, OTP_KEYWORDS)) return "IGNORE";
+
+  // 🔒 FILTER OUT: Promotions / Marketing offers
+  if (includesAny(text, PROMOTION_KEYWORDS)) return "IGNORE";
+
+  // 🔒 FILTER OUT: LinkedIn newsletters and noise
+  if (includesAny(text, LINKEDIN_NOISE_KEYWORDS)) return "IGNORE";
 
   // 1️⃣ Route obvious noise to MARKETING (not deleted)
   if (includesAny(text, MARKETING_KEYWORDS)) return "MARKETING";
